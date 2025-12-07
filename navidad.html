@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Postal Navideña Legendaria</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(180deg, #04152e, #0b3a5a);
+      font-family: Inter, sans-serif;
+      color: white;
+      overflow: hidden;
+      transition: background 0.6s ease;
+    }
+
+    body.night {
+      background: radial-gradient(circle at top, #000814, #000000);
+    }
+
+    /* NIEVE */
+    .snow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+    .snow span {
+      position: absolute; top: -10px; width: 6px; height: 6px; background: white;
+      border-radius: 50%; opacity: 0.8; animation: fall linear infinite;
+    }
+    @keyframes fall { to { transform: translateY(110vh); } }
+
+    /* COPOS QUE SIGUEN AL RATÓN */
+    .mouse-snow {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+      pointer-events: none;
+      opacity: 0.7;
+      animation: fade 1s forwards;
+    }
+    @keyframes fade { to { opacity: 0; transform: translateY(20px); } }
+
+    /* CONFETI */
+    .confetti {
+      position: fixed;
+      width: 8px;
+      height: 14px;
+      background: gold;
+      top: -10px;
+      animation: confettiFall 2.5s linear forwards;
+    }
+    @keyframes confettiFall {
+      to { transform: translateY(110vh) rotate(360deg); }
+    }
+
+    /* ESCENA */
+    .scene {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 70px;
+      pointer-events: none;
+    }
+
+    .tree-big {
+      font-size: 120px;
+      animation: lights 1.2s infinite alternate;
+    }
+
+    body.night .tree-big {
+      animation: none;
+      filter: grayscale(80%);
+    }
+
+    @keyframes lights {
+      0% { filter: drop-shadow(0 0 10px gold); }
+      50% { filter: drop-shadow(0 0 25px cyan); }
+      100% { filter: drop-shadow(0 0 10px magenta); }
+    }
+
+    .snowman { font-size: 90px; margin-left: 40px; }
+
+    .gifts {
+      font-size: 60px;
+      margin-right: 40px;
+      display: inline-block;
+      animation: floatGift 2.5s ease-in-out infinite;
+    }
+
+    @keyframes floatGift {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-14px); }
+    }
+
+    /* TARJETA */
+    .card {
+      position: relative;
+      z-index: 10;
+      max-width: 460px;
+      margin: 8vh auto;
+      padding: 36px;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      text-align: center;
+    }
+
+    h1 {
+      font-family: "Mountains of Christmas", cursive;
+      font-size: 46px;
+      margin-bottom: 12px;
+      color: #ffdf6c;
+      text-shadow: 0 0 16px rgba(255, 223, 108, 0.7);
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 1.6;
+      opacity: 0.95;
+      margin-bottom: 14px;
+    }
+
+    .decor { font-size: 38px; margin-bottom: 10px; }
+
+    .btn {
+      margin: 8px 6px 0;
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ffdf6c, #ff9f1a);
+      color: #1a1a1a;
+      text-decoration: none;
+      font-weight: 600;
+      transition: transform 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn:hover { transform: scale(1.08); }
+
+    .from { font-size: 14px; opacity: 0.7; margin-top: 12px; }
+
+    .hidden-text { margin-top: 14px; font-size: 15px; display: none; }
+
+    .countdown {
+      margin-top: 10px;
+      font-size: 15px;
+      opacity: 0.85;
+    }
+
+    /* MODO MÓVIL */
+    @media (max-width: 500px) {
+      .card { margin: 5vh 12px; padding: 24px; }
+      h1 { font-size: 38px; }
+      .scene { font-size: 52px; }
+      .tree-big { font-size: 90px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- AUDIO -->
+  <audio id="music" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/10/25/audio_90c91c6b86.mp3?filename=christmas-village-ambient-12276.mp3" type="audio/mpeg">
+  </audio>
+
+  <audio id="bell">
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_8e1f7f3a7c.mp3?filename=jingle-bell-113268.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- NIEVE -->
+  <div class="snow" id="snow"></div>
+
+  <!-- POSTAL -->
+  <div class="card">
+    <h1>¡Feliz Navidad!</h1>
+    <div class="decor">✨ 🎁 ❄️ ⭐ 🎄</div>
+
+    <p id="personal">Para alguien muy especial 💛</p>
+
+    <p>
+      Que esta Navidad esté llena de magia, sonrisas, abrazos, ilusión y momentos que brillen más que las luces del árbol.
+    </p>
+
+    <div>
+      <span class="btn" onclick="mostrarTexto()">🎅 Sorpréndeme</span>
+      <span class="btn" onclick="toggleNight()">🌙 Modo noche</span>
+    </div>
+
+    <div class="hidden-text" id="textoNavidad"></div>
+
+    <div class="btn" onclick="abrirJuego()">🎮 Jugar al minijuego</div>
+    <div class="countdown" id="contador"></div>
+
+    <div class="btn" onclick="compartirWhatsApp()">📲 Enviar por WhatsApp</div>
+
+    <div class="from">— Hecho por Elias</div>
+  </div>
+
+  <!-- JUEGO FLAPPY STAR -->
+  <div id="gameOverlay" style="display:none; position:fixed; inset:0; background:#04152e; z-index:99;">
+    <canvas id="gameCanvas" width="360" height="640" style="display:block; margin:0 auto; background:linear-gradient(#0b3a5a,#04152e);"></canvas>
+    <div style="text-align:center; margin-top:10px;">
+      <span class="btn" onclick="cerrarJuego()">❌ Salir del juego</span>
+    </div>
+  </div>
+
+  <!-- ESCENA -->
+  <div class="scene">
+    <span class="gifts">🎁🎁🎁</span>
+    <span class="tree-big">🎄</span>
+    <span class="snowman">☃️</span>
+  </div>
+
+  <script>
+    /* NIEVE */
+    const snowContainer = document.getElementById("snow");
+    for (let i = 0; i < 120; i++) {
+      const snowflake = document.createElement("span");
+      const size = Math.random() * 4 + 3;
+      snowflake.style.left = Math.random() * 100 + "vw";
+      snowflake.style.width = size + "px";
+      snowflake.style.height = size + "px";
+      snowflake.style.animationDuration = Math.random() * 5 + 5 + "s";
+      snowflake.style.opacity = Math.random();
+      snowflake.style.animationDelay = Math.random() * 5 + "s";
+      snowContainer.appendChild(snowflake);
+    }
+
+    /* COPOS QUE SIGUEN AL RATÓN */
+    document.addEventListener("mousemove", (e) => {
+      const flake = document.createElement("div");
+      flake.className = "mouse-snow";
+      flake.style.left = e.clientX + "px";
+      flake.style.top = e.clientY + "px";
+      document.body.appendChild(flake);
+      setTimeout(() => flake.remove(), 1000);
+    });
+
+    /* MÚSICA */
+    const music = document.getElementById("music");
+    const bell = document.getElementById("bell");
+
+    document.body.addEventListener("click", () => {
+      music.play();
+      bell.play();
+    }, { once: true });
+
+    /* MENSAJES PERSONALIZADOS */
+    const mensajes = [
+      "Que todos tus sueños brillen más que las luces del árbol 🎄✨",
+      "La magia de la Navidad vive en cada sonrisa 💛",
+      "Que nunca te falte ilusión, ni motivos para celebrar 🎁",
+      "Un abrazo gigante lleno de paz, amor y alegría ❄️"
+    ];
+
+    function mostrarTexto() {
+      const caja = document.getElementById("textoNavidad");
+      const mensaje = mensajes[Math.floor(Math.random() * mensajes.length)];
+      caja.innerText = mensaje;
+      caja.style.display = "block";
+      bell.play();
+      lanzarConfeti();
+    }
+
+    /* CONFETI */
+    function lanzarConfeti() {
+      for (let i = 0; i < 40; i++) {
+        const confetti = document.createElement("div");
+        confetti.className = "confetti";
+        confetti.style.left = Math.random() * 100 + "vw";
+        confetti.style.background = `hsl(${Math.random()*360}, 80%, 60%)`;
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 2500);
+      }
+    }
+
+    /* CONTADOR HASTA NAVIDAD */
+    function actualizarContador() {
+      const ahora = new Date();
+      let navidad = new Date(ahora.getFullYear(), 11, 25);
+      if (ahora > navidad) navidad = new Date(ahora.getFullYear() + 1, 11, 25);
+
+      const diff = navidad - ahora;
+      const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+      document.getElementById("contador").innerText = `Faltan ${dias} días para Navidad 🎄`;
+    }
+    actualizarContador();
+
+    /* MODO NOCHE */
+    function toggleNight() {
+      document.body.classList.toggle("night");
+    }
+
+    /* COMPARTIR POR WHATSAPP */
+    function compartirWhatsApp() {
+      const texto = encodeURIComponent("Te envío esta postal navideña que he hecho para ti 🎄✨ ¡Feliz Navidad! ");
+      const url = `https://wa.me/?text=${texto}`;
+      window.open(url, '_blank');
+    }
+
+    let jugando = false;
+    let ctx, estrellaY, velocidad, gravedad, arboles, puntos;
+
+    function abrirJuego() {
+      document.getElementById("gameOverlay").style.display = "block";
+      const canvas = document.getElementById("gameCanvas");
+      ctx = canvas.getContext("2d");
+      iniciarJuego();
+    }
+
+    function cerrarJuego() {
+      jugando = false;
+      document.getElementById("gameOverlay").style.display = "none";
+    }
+
+    function iniciarJuego() {
+      estrellaY = 300;
+      velocidad = 0;
+      gravedad = 0.4;
+      arboles = [];
+      puntos = 0;
+      for (let i = 0; i < 3; i++) {
+        arboles.push(crearArbol(400 + i * 220));
+      }
+      jugando = true;
+      requestAnimationFrame(loopJuego);
+    }
+
+    function crearArbol(x) {
+      const hueco = 140;
+      const top = Math.random() * 260 + 40;
+      return { x, top, bottom: top + hueco };
+    }
+
+    function loopJuego() {
+      if (!jugando) return;
+      ctx.clearRect(0, 0, 360, 640);
+
+      // Estrella
+      velocidad += gravedad;
+      estrellaY += velocidad;
+      ctx.font = "32px Arial";
+      ctx.fillText("⭐", 80, estrellaY);
+
+      // Árboles
+      arboles.forEach(arbol => {
+        arbol.x -= 2.5;
+        ctx.font = "48px Arial";
+        for (let y = 0; y < arbol.top; y += 40) ctx.fillText("🎄", arbol.x, y + 40);
+        for (let y = arbol.bottom; y < 640; y += 40) ctx.fillText("🎄", arbol.x, y + 40);
+
+        // Colisión
+        if (80 > arbol.x - 20 && 80 < arbol.x + 40 && (estrellaY < arbol.top || estrellaY > arbol.bottom)) {
+          jugando = false;
+          setTimeout(() => alert(`Game Over ❄️ Puntos: ${puntos}`), 100);
+        }
+
+        // Puntos
+        if (arbol.x === 80) puntos++;
+      });
+
+      // Reciclar árboles
+      if (arboles[0].x < -60) {
+        arboles.shift();
+        arboles.push(crearArbol(360 + 200));
+        puntos++;
+      }
+
+      // Suelo
+      if (estrellaY > 620 || estrellaY < 0) {
+        jugando = false;
+        setTimeout(() => alert(`Game Over ❄️ Puntos: ${puntos}`), 100);
+      }
+
+      // Puntuación
+      ctx.fillStyle = "white";
+      ctx.font = "20px Arial";
+      ctx.fillText(`Puntos: ${puntos}`, 10, 30);
+
+      requestAnimationFrame(loopJuego);
+    }
+
+    document.addEventListener("keydown", () => { if (jugando) velocidad = -7; });
+    document.addEventListener("click", () => { if (jugando) velocidad = -7; });
+
+    /* TEXTO PERSONAL AUTOMÁTICO */
+    const nombre = ""; // ESCRIBE AQUÍ EL NOMBRE SI QUIERES
+    if (nombre.trim() !== "") {
+      document.getElementById("personal").innerText = `Para ${nombre} 💛`;
+    }
+  </script>
+
+</body>
+</html>
